@@ -48,22 +48,7 @@ setInterval(function() {
             return;
         }
 
-        let wordAnswer = wordAnswers[Math.floor(Math.random() * (wordAnswers.length - 1))];
-        let timeIncrement = 0;
-
-        setTimeout(function() {
-            playersByPeerId[selfPeerId].animation = { type: "woo", startTime: Date.now(), duration: 2000 };
-            for(let n = 1; n <= wordAnswer.length; n++) {
-                timeIncrement += 50 + Math.floor(Math.random() * 200);
-
-                setTimeout(function() {
-                    socket.emit("setWord", wordAnswer.substring(0, n), false);
-
-                    if(n === wordAnswer.length)
-                        socket.emit("setWord", wordAnswer, true);
-                }, timeIncrement);
-            }
-        }, 500);
+        setWord(player, wordAnswers);
     }
 
     if(milestone.playerStatesByPeerId !== undefined && oldPlayer?.wasWordValidated) {
@@ -73,6 +58,34 @@ setInterval(function() {
         console.log(`✅ Mot utilisé : ${word} | ${wordsExcluded.length} mot(s) utilisé(s)`);
     }
 }, 10)
+
+function setWord(player, wordAnswers) {
+
+    if(milestone.currentPlayerPeerId === selfPeerId) {
+        let wordAnswer = wordAnswers[Math.floor(Math.random() * (wordAnswers.length - 1))];
+        let timeIncrement = 0;
+    
+        setTimeout(function() {
+            player.animation = { type: "woo", startTime: Date.now(), duration: 2000 };
+            for(let n = 1; n <= wordAnswer.length; n++) {
+                timeIncrement += 50 + Math.floor(Math.random() * 200);
+    
+                setTimeout(function() {
+                    socket.emit("setWord", wordAnswer.substring(0, n), false);
+    
+                    if(n === wordAnswer.length) {
+                        socket.emit("setWord", wordAnswer, true);
+                        setTimeout(function() {
+                            if(!player.wasWordValidated) {
+                                setWord(player, wordAnswers);
+                            }
+                        }, 100);
+                    }
+                }, timeIncrement);
+            }
+        }, 500);
+    }
+}
 
 function strNoAccent(str) {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
