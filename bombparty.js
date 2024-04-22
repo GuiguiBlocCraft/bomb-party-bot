@@ -27,22 +27,28 @@ setInterval(function() {
 
         if(window.joinAuto) {
             setTimeout(function() {
-                console.log("💣 Partie rejoint");
+                console.log("💣 Partie rejointe");
                 socket.emit("joinRound");
             }, 1000);
         }
         return;
     }
 
-    if(milestone.currentPlayerPeerId === selfPeerId && running) {
+    if(milestone.currentPlayerPeerId === selfPeerId && window.running) {
+        let player = milestone.playerStatesByPeerId[milestone.currentPlayerPeerId];
         let wordAnswers = wordlist.filter(str => str.includes(milestone.syllable) && !wordsExcluded.includes(str));
+
+        let wordAnswersTmp = wordAnswers.filter(str => bonusLetters(player, str));
+
+        if(wordAnswersTmp.length > 0)
+            wordAnswers = wordAnswersTmp;
 
         if(!wordAnswers.length === 0) {
             console.log(`❌ Aucun mot trouvé concernant la syllabe ${milestone.syllable}`);
             return;
         }
 
-        let wordAnswer = wordAnswers[Math.floor(Math.random() * wordAnswers.length)];
+        let wordAnswer = wordAnswers[Math.floor(Math.random() * (wordAnswers.length - 1))];
         let timeIncrement = 0;
 
         setTimeout(function() {
@@ -61,11 +67,22 @@ setInterval(function() {
     }
 
     if(milestone.playerStatesByPeerId !== undefined && oldPlayer?.wasWordValidated) {
-        wordsExcluded.push(oldPlayer.word);
-        console.log(`✅ Mot utilisé : ${oldPlayer.word} | ${wordsExcluded.length} mot(s) utilisé(s)`);
+        let word = oldPlayer.word.split('').filter(a => isNaN(a) || a != '-').join('');
+
+        wordsExcluded.push(word);
+        console.log(`✅ Mot utilisé : ${word} | ${wordsExcluded.length} mot(s) utilisé(s)`);
     }
 }, 10)
 
 function strNoAccent(str) {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+function bonusLetters(player, word) {
+    for(let letter of Object.getOwnPropertyNames(player.bonusLetters)) {
+        if(player.bonusLetters[letter] === 1 && word.includes(letter))
+            return true;
+    }
+
+    return false;
 }
