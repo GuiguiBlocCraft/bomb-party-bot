@@ -8,25 +8,25 @@ window.running = true;
 window.joinAuto = true;
 
 console.clear();
-console.log("%cJKLM %cBot\n%cDéveloppé par %cGuiguiBlocCraft %cet %cCocoCOD4%c\n\nCommandes :\n%c  running = false|true %c: Activer le bot\n%c  joinAuto = false|true %c: Rejoindre automatiquement la partie\n","font-size: 48px","font-size: 24px","font-size: 16px; color: #bada55","font-size: 16px; color: none","font-size: 16px; color: #bada55",   "font-size: 16px; color: none","font-size: 16px; color: #00ff00","font-size: 14px; color: #e00000; font-weight: bold","font-size: 14px; color: none","font-size: 14px; color: #e00000; font-weight: bold","font-size: 14px; color: none");
+console.log("%cJKLM %cBot\n%cDéveloppé par %cGuiguiBlocCraft %cet %cCocoCOD4%c\n\nCommandes :\n%c  running = false|true %c: Activer le bot\n%c  joinAuto = false|true %c: Rejoindre automatiquement la partie\n", "font-size: 48px", "font-size: 24px", "font-size: 16px; color: #bada55", "font-size: 16px; color: none", "font-size: 16px; color: #bada55", "font-size: 16px; color: none", "font-size: 16px; color: #00ff00", "font-size: 14px; color: #e00000; font-weight: bold", "font-size: 14px; color: none", "font-size: 14px; color: #e00000; font-weight: bold", "font-size: 14px; color: none");
 
 fetch('https://raw.githubusercontent.com/chrplr/openlexicon/master/datasets-info/Liste-de-mots-francais-Gutenberg/liste.de.mots.francais.frgut.txt')
     .then(a => a.text())
     .then(a => wordlist = a.split("\n").map(a => strNoAccent(a)));
 
-setInterval(function() {
-    if(milestone.currentPlayerPeerId === oldPlayerId)
+setInterval(function () {
+    if (milestone.currentPlayerPeerId === oldPlayerId)
         return;
 
-    if(milestone.playerStatesByPeerId) oldPlayer = milestone.playerStatesByPeerId[oldPlayerId];
+    if (milestone.playerStatesByPeerId) oldPlayer = milestone.playerStatesByPeerId[oldPlayerId];
     oldPlayerId = milestone.currentPlayerPeerId;
 
-    if(milestone.currentPlayerPeerId === undefined) {
+    if (milestone.currentPlayerPeerId === undefined) {
         console.log("💣 Partie réinitialisée !");
         wordsExcluded = [];
 
-        if(window.joinAuto) {
-            setTimeout(function() {
+        if (window.joinAuto) {
+            setTimeout(function () {
                 console.log("💣 Partie rejointe");
                 socket.emit("joinRound");
             }, 1000);
@@ -34,16 +34,16 @@ setInterval(function() {
         return;
     }
 
-    if(milestone.currentPlayerPeerId === selfPeerId && window.running) {
+    if (milestone.currentPlayerPeerId === selfPeerId && window.running) {
         let player = milestone.playerStatesByPeerId[milestone.currentPlayerPeerId];
         let wordAnswers = wordlist.filter(str => str.includes(milestone.syllable) && !wordsExcluded.includes(str));
 
         let wordAnswersTmp = wordAnswers.filter(str => bonusLetters(player, str));
 
-        if(wordAnswersTmp.length > 0)
+        if (wordAnswersTmp.length > 0)
             wordAnswers = wordAnswersTmp;
 
-        if(!wordAnswers.length === 0) {
+        if (!wordAnswers.length === 0) {
             console.log(`❌ Aucun mot trouvé concernant la syllabe ${milestone.syllable}`);
             return;
         }
@@ -51,7 +51,7 @@ setInterval(function() {
         setWord(player, wordAnswers);
     }
 
-    if(milestone.playerStatesByPeerId !== undefined && oldPlayer?.wasWordValidated) {
+    if (milestone.playerStatesByPeerId !== undefined && oldPlayer?.wasWordValidated) {
         let word = oldPlayer.word.split('').filter(a => (a.charCodeAt() >= 97 && a.charCodeAt() <= 122) || a == '-').join('');
 
         wordsExcluded.push(word);
@@ -60,23 +60,22 @@ setInterval(function() {
 }, 10)
 
 function setWord(player, wordAnswers) {
-
-    if(milestone.currentPlayerPeerId === selfPeerId) {
+    if (milestone.currentPlayerPeerId === selfPeerId) {
         let wordAnswer = wordAnswers[Math.floor(Math.random() * (wordAnswers.length - 1))];
         let timeIncrement = 0;
-    
-        setTimeout(function() {
+
+        setTimeout(function () {
             player.animation = { type: "woo", startTime: Date.now(), duration: 2000 };
-            for(let n = 1; n <= wordAnswer.length; n++) {
+            for (let n = 1; n <= wordAnswer.length; n++) {
                 timeIncrement += 50 + Math.floor(Math.random() * 200);
-    
-                setTimeout(function() {
+
+                setTimeout(function () {
                     socket.emit("setWord", wordAnswer.substring(0, n), false);
-    
-                    if(n === wordAnswer.length) {
+
+                    if (n === wordAnswer.length) {
                         socket.emit("setWord", wordAnswer, true);
-                        setTimeout(function() {
-                            if(!player.wasWordValidated) {
+                        setTimeout(function () {
+                            if (!player.wasWordValidated) {
                                 setWord(player, wordAnswers);
                             }
                         }, 100);
@@ -92,8 +91,8 @@ function strNoAccent(str) {
 }
 
 function bonusLetters(player, word) {
-    for(let letter of Object.getOwnPropertyNames(player.bonusLetters)) {
-        if(player.bonusLetters[letter] === 1 && word.includes(letter))
+    for (let letter of Object.getOwnPropertyNames(player.bonusLetters)) {
+        if (player.bonusLetters[letter] === 1 && word.includes(letter))
             return true;
     }
 
