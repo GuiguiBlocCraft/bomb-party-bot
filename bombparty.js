@@ -63,7 +63,7 @@ setInterval(function() {
                         socket.emit("setWord", wordAnswer, true);
                 }, timeIncrement);
             }
-        }, 300);
+        }, 500);
     }
 
     if(milestone.playerStatesByPeerId !== undefined && oldPlayer?.wasWordValidated) {
