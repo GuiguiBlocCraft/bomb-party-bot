@@ -67,7 +67,7 @@ setInterval(function() {
     }
 
     if(milestone.playerStatesByPeerId !== undefined && oldPlayer?.wasWordValidated) {
-        let word = oldPlayer.word.split('').filter(a => isNaN(a) || a != '-').join('');
+        let word = oldPlayer.word.split('').filter(a => (a.charCodeAt() >= 97 && a.charCodeAt() <= 122) || a == '-').join('');
 
         wordsExcluded.push(word);
         console.log(`✅ Mot utilisé : ${word} | ${wordsExcluded.length} mot(s) utilisé(s)`);
