@@ -7,6 +7,7 @@ let oldWord = null;
 window.running = true;
 window.joinAuto = true;
 
+console.clear();
 console.log("%cJKLM %cBot\n%cDéveloppé par %cGuiguiBlocCraft %cet %cCocoCOD4%c\n\nCommandes :\n%c  running = false|true %c: Activer le bot\n%c  joinAuto = false|true %c: Rejoindre automatiquement la partie\n","font-size: 48px","font-size: 24px","font-size: 16px; color: #bada55","font-size: 16px; color: none","font-size: 16px; color: #bada55",   "font-size: 16px; color: none","font-size: 16px; color: #00ff00","font-size: 14px; color: #e00000; font-weight: bold","font-size: 14px; color: none","font-size: 14px; color: #e00000; font-weight: bold","font-size: 14px; color: none");
 
 fetch('https://raw.githubusercontent.com/chrplr/openlexicon/master/datasets-info/Liste-de-mots-francais-Gutenberg/liste.de.mots.francais.frgut.txt')
@@ -45,6 +46,7 @@ setInterval(function() {
         let timeIncrement = 0;
 
         setTimeout(function() {
+            playersByPeerId[selfPeerId].animation = { type: "woo", startTime: Date.now(), duration: 2000 };
             for(let n = 1; n <= wordAnswer.length; n++) {
                 timeIncrement += 50 + Math.floor(Math.random() * 200);
 
