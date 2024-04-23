@@ -68,7 +68,7 @@ function setWord(player, wordAnswers) {
         let timeIncrement = 0;
 
         setTimeout(function () {
-            player.animation = { type: "woo", startTime: Date.now(), duration: 2000 };
+            playersByPeerId[selfPeerId].animation = { type: "woo", startTime: Date.now(), duration: 2000 };
             for (let n = 1; n <= wordAnswer.length; n++) {
                 timeIncrement += 50 + Math.floor(Math.random() * 200);
 
