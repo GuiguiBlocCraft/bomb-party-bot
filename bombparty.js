@@ -3,18 +3,21 @@ let wordsExcluded = [];
 let oldPlayerId;
 let oldPlayer;
 let oldWord = null;
+let currentLanguage;
 
 window.running = true;
 window.joinAuto = true;
+window.language = 'fr';
 
 console.clear();
 console.log("%cJKLM %cBot\n%cDéveloppé par %cGuiguiBlocCraft %cet %cCocoCOD4%c\n\nCommandes :\n%c  running = false|true %c: Activer le bot\n%c  joinAuto = false|true %c: Rejoindre automatiquement la partie\n", "font-size: 48px", "font-size: 24px", "font-size: 16px; color: #bada55", "font-size: 16px; color: none", "font-size: 16px; color: #bada55", "font-size: 16px; color: none", "font-size: 16px; color: #00ff00", "font-size: 14px; color: #e00000; font-weight: bold", "font-size: 14px; color: none", "font-size: 14px; color: #e00000; font-weight: bold", "font-size: 14px; color: none");
 
-fetch('https://raw.githubusercontent.com/chrplr/openlexicon/master/datasets-info/Liste-de-mots-francais-Gutenberg/liste.de.mots.francais.frgut.txt')
-    .then(a => a.text())
-    .then(a => wordlist = a.split("\n").map(a => strNoAccent(a)));
-
 setInterval(function () {
+    if(window.language != currentLanguage) {
+        currentLanguage = window.language;
+        fetchWordListUrl(currentLanguage);
+    }
+    
     if (milestone.currentPlayerPeerId === oldPlayerId)
         return;
 
@@ -97,4 +100,24 @@ function bonusLetters(player, word) {
     }
 
     return false;
+}
+
+function fetchWordListUrl(language) {
+    let url;
+
+    switch(language) {
+        case "fr":
+            url = "https://raw.githubusercontent.com/chrplr/openlexicon/master/datasets-info/Liste-de-mots-francais-Gutenberg/liste.de.mots.francais.frgut.txt";
+            break;
+        case "en":
+            url = "https://raw.githubusercontent.com/sindresorhus/word-list/main/words.txt"
+            break;
+        default:
+            console.log('😐 Langue inconnue');
+            return;
+    }
+
+    fetch(url)
+        .then(a => a.text())
+        .then(a => wordlist = a.split("\n").map(a => strNoAccent(a)));
 }
