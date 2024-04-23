@@ -11,52 +11,61 @@ window.joinAuto = true;
 console.clear();
 console.log("%cJKLM %cBot\n%cDéveloppé par %cGuiguiBlocCraft %cet %cCocoCOD4%c\n\nCommandes :\n%c  running = false|true %c: Activer le bot\n%c  joinAuto = false|true %c: Rejoindre automatiquement la partie\n", "font-size: 48px", "font-size: 24px", "font-size: 16px; color: #bada55", "font-size: 16px; color: none", "font-size: 16px; color: #bada55", "font-size: 16px; color: none", "font-size: 16px; color: #00ff00", "font-size: 14px; color: #e00000; font-weight: bold", "font-size: 14px; color: none", "font-size: 14px; color: #e00000; font-weight: bold", "font-size: 14px; color: none");
 
-fetchWordListUrl(rules.dictionaryId.value);
+let wordlistUrl = setWordListUrl(rules.dictionaryId.value);
 
-setInterval(function () {
-    if (milestone.currentPlayerPeerId === oldPlayerId)
-        return;
+if(wordlistUrl !== undefined) {
+    fetch(wordlistUrl)
+        .then(a => a.text())
+        .then(a => wordlist = a.split("\n").map(a => strNoAccent(a)))
+        .finally(runBot());
+}
 
-    if (milestone.playerStatesByPeerId) oldPlayer = milestone.playerStatesByPeerId[oldPlayerId];
-    oldPlayerId = milestone.currentPlayerPeerId;
-
-    if (milestone.currentPlayerPeerId === undefined) {
-        console.log("💣 Partie réinitialisée !");
-        wordsExcluded = [];
-
-        if (window.joinAuto) {
-            setTimeout(function () {
-                console.log("💣 Partie rejointe");
-                socket.emit("joinRound");
-            }, 1000);
-        }
-        return;
-    }
-
-    if (milestone.currentPlayerPeerId === selfPeerId && window.running) {
-        let player = milestone.playerStatesByPeerId[milestone.currentPlayerPeerId];
-        let wordAnswers = wordlist.filter(str => str.includes(milestone.syllable) && !wordsExcluded.includes(str));
-
-        let wordAnswersTmp = wordAnswers.filter(str => bonusLetters(player, str));
-
-        if (wordAnswersTmp.length > 0)
-            wordAnswers = wordAnswersTmp;
-
-        if (!wordAnswers.length === 0) {
-            console.log(`❌ Aucun mot trouvé concernant la syllabe ${milestone.syllable}`);
+function runBot() {
+    setInterval(function () {
+        if (milestone.currentPlayerPeerId === oldPlayerId)
+            return;
+    
+        if (milestone.playerStatesByPeerId) oldPlayer = milestone.playerStatesByPeerId[oldPlayerId];
+        oldPlayerId = milestone.currentPlayerPeerId;
+    
+        if (milestone.currentPlayerPeerId === undefined) {
+            console.log("💣 Partie réinitialisée !");
+            wordsExcluded = [];
+    
+            if (window.joinAuto) {
+                setTimeout(function () {
+                    console.log("💣 Partie rejointe");
+                    socket.emit("joinRound");
+                }, 1000);
+            }
             return;
         }
-
-        setWord(player, wordAnswers);
-    }
-
-    if (milestone.playerStatesByPeerId !== undefined && oldPlayer?.wasWordValidated) {
-        let word = oldPlayer.word.split('').filter(a => (a.charCodeAt() >= 97 && a.charCodeAt() <= 122) || a == '-').join('');
-
-        wordsExcluded.push(word);
-        console.log(`✅ Mot utilisé : ${word} | ${wordsExcluded.length} mot(s) utilisé(s)`);
-    }
-}, 10)
+    
+        if (milestone.currentPlayerPeerId === selfPeerId && window.running) {
+            let player = milestone.playerStatesByPeerId[milestone.currentPlayerPeerId];
+            let wordAnswers = wordlist.filter(str => str.includes(milestone.syllable) && !wordsExcluded.includes(str));
+    
+            let wordAnswersTmp = wordAnswers.filter(str => bonusLetters(player, str));
+    
+            if (wordAnswersTmp.length > 0)
+                wordAnswers = wordAnswersTmp;
+    
+            if (!wordAnswers.length === 0) {
+                console.log(`❌ Aucun mot trouvé concernant la syllabe ${milestone.syllable}`);
+                return;
+            }
+    
+            setWord(player, wordAnswers);
+        }
+    
+        if (milestone.playerStatesByPeerId !== undefined && oldPlayer?.wasWordValidated) {
+            let word = oldPlayer.word.split('').filter(a => (a.charCodeAt() >= 97 && a.charCodeAt() <= 122) || a == '-').join('');
+    
+            wordsExcluded.push(word);
+            console.log(`✅ Mot utilisé : ${word} | ${wordsExcluded.length} mot(s) utilisé(s)`);
+        }
+    }, 10)
+}
 
 function setWord(player, wordAnswers) {
     if (milestone.currentPlayerPeerId === selfPeerId) {
@@ -98,24 +107,16 @@ function bonusLetters(player, word) {
     return false;
 }
 
-function fetchWordListUrl(language) {
-    let url;
-
+function setWordListUrl(language) {
     switch(language) {
         case "fr":
-            url = "https://raw.githubusercontent.com/chrplr/openlexicon/master/datasets-info/Liste-de-mots-francais-Gutenberg/liste.de.mots.francais.frgut.txt";
             console.log('Langue : français 🥐');
-            break;
+            return "https://raw.githubusercontent.com/chrplr/openlexicon/master/datasets-info/Liste-de-mots-francais-Gutenberg/liste.de.mots.francais.frgut.txt";
         case "en":
-            url = "https://raw.githubusercontent.com/sindresorhus/word-list/main/words.txt"
             console.log('Language: english 💂');
-            break;
+            return "https://raw.githubusercontent.com/sindresorhus/word-list/main/words.txt";
         default:
             console.log(`Langue '${language}' non gérée 😐`);
             return;
     }
-
-    fetch(url)
-        .then(a => a.text())
-        .then(a => wordlist = a.split("\n").map(a => strNoAccent(a)));
 }
