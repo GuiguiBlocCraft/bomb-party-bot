@@ -23,7 +23,7 @@ if(wordlistUrl !== undefined) {
 
     fetch(wordlistUrl)
         .then(a => a.text())
-        .then(a => wordlist = a.split("\n").map(a => strNoAccent(a)))
+        .then(a => wordlist = a.split("\n").map(a => strNoAccent(a.toLowerCase())))
         .finally(runBot());
 }
 
