@@ -129,7 +129,7 @@ function setWordListUrl(language) {
             console.log('Mode => pokemon (en) 🔥');
             return "https://raw.githubusercontent.com/cervoise/pentest-scripts/master/password-cracking/wordlists/pokemon-list-en.txt";
         default:
-            console.log(`Langue '${language}' non gérée 😐`);
+            console.log(`Mode '${language}' non gérée 😐`);
             return;
     }
 }
