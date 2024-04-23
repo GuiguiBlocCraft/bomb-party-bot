@@ -59,7 +59,7 @@ function runBot() {
     
             if (wordAnswers.length === 0) {
                 console.log(`❌ Aucun mot trouvé concernant la syllabe '${milestone.syllable}'`);
-                return;
+                wordAnswers.push("/suicide");
             }
     
             setWord(player, wordAnswers);
