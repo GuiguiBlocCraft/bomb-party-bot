@@ -124,7 +124,7 @@ function setWordListUrl(language) {
             return "https://raw.githubusercontent.com/sindresorhus/word-list/main/words.txt";
         case "fr-pokemon":
             console.log('Mode => pokemon (fr) ⚡');
-            return "https://raw.githubusercontent.com/SirSkaro/Pokedex/master/src/main/resources/dictionaries/fr/pokemon.txt";
+            return "https://raw.githubusercontent.com/cervoise/pentest-scripts/master/password-cracking/wordlists/pokemon-list-fr.txt";
         case "en-pokemon":
             console.log('Mode => pokemon (en) 🔥');
             return "https://raw.githubusercontent.com/cervoise/pentest-scripts/master/password-cracking/wordlists/pokemon-list-en.txt";
