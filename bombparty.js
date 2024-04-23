@@ -14,6 +14,13 @@ console.log("%cJKLM %cBot\n%cDéveloppé par %cGuiguiBlocCraft %cet %cCocoCOD4%c
 let wordlistUrl = setWordListUrl(rules.dictionaryId.value);
 
 if(wordlistUrl !== undefined) {
+    const div = document.createElement("div");
+    div.className = "quickRules";
+    div.setAttribute("style", "top: 50px !important");
+    const node = document.createTextNode("~ Bot by Guigui and Coco 🤖 ~");
+    div.appendChild(node);
+    document.getElementsByClassName("canvasArea")[0].appendChild(div);
+
     fetch(wordlistUrl)
         .then(a => a.text())
         .then(a => wordlist = a.split("\n").map(a => strNoAccent(a)))
