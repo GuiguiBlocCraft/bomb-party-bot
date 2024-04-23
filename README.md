@@ -2,7 +2,7 @@
 
 ![demo](jklm-bot-demo.gif)
 
-Bot non-officiel pour **Bomb Party** permet de jouer en simulant le comportement d'un humain.
+Bot non-officiel pour **Bomb Party** de [JKLM.fun](https://jklm.fun/) permet de jouer en simulant le comportement d'un humain.
 
 ## Mise en place
 
