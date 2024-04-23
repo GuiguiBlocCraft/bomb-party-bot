@@ -57,8 +57,8 @@ function runBot() {
             if (wordAnswersTmp.length > 0)
                 wordAnswers = wordAnswersTmp;
     
-            if (!wordAnswers.length === 0) {
-                console.log(`❌ Aucun mot trouvé concernant la syllabe ${milestone.syllable}`);
+            if (wordAnswers.length === 0) {
+                console.log(`❌ Aucun mot trouvé concernant la syllabe '${milestone.syllable}'`);
                 return;
             }
     
