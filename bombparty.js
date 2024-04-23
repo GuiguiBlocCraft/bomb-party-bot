@@ -117,11 +117,17 @@ function bonusLetters(player, word) {
 function setWordListUrl(language) {
     switch(language) {
         case "fr":
-            console.log('Langue : français 🥐');
+            console.log('Mode => français 🥐');
             return "https://raw.githubusercontent.com/chrplr/openlexicon/master/datasets-info/Liste-de-mots-francais-Gutenberg/liste.de.mots.francais.frgut.txt";
         case "en":
-            console.log('Language: english 💂');
+            console.log('Mode => english 💂');
             return "https://raw.githubusercontent.com/sindresorhus/word-list/main/words.txt";
+        case "fr-pokemon":
+            console.log('Mode => pokemon (fr) ⚡');
+            return "https://raw.githubusercontent.com/SirSkaro/Pokedex/master/src/main/resources/dictionaries/fr/pokemon.txt";
+        case "en-pokemon":
+            console.log('Mode => pokemon (en) 🔥');
+            return "https://raw.githubusercontent.com/cervoise/pentest-scripts/master/password-cracking/wordlists/pokemon-list-en.txt";
         default:
             console.log(`Langue '${language}' non gérée 😐`);
             return;
